@@ -7,7 +7,12 @@ const AdminPage = () => {
     const fetchUsers = async () => {
         try {
             const response = await apiClient.get('/users');
-            setUsers(response.data);
+            const sanitizedUsers = response.data.map(user => ({
+                ...user,
+                username: user.username.replace(/<[^>]+>/g, ''),
+                email: user.email.replace(/<[^>]+>/g, '')
+            }));
+            setUsers(sanitizedUsers);
         } catch (error) {
             console.error('Failed to fetch users:', error);
         }
@@ -23,7 +28,6 @@ const AdminPage = () => {
     };
 
     const handleEdit = (userId) => {
-        // Navigate to an edit page or display an edit modal
         console.log('Edit user:', userId);
     };
 

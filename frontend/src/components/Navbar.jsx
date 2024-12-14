@@ -8,18 +8,16 @@ const Navbar = () => {
     const token = localStorage.getItem('token');
     let username = '';
 
-    // Decode the token if it exists
     if (token) {
         try {
             const decodedToken = jwtDecode(token);
-            username = decodedToken.username || '';
+            username = (decodedToken.username || '').replace(/<[^>]+>/g, '');
         } catch (error) {
             console.error('Error decoding token:', error);
             username = '';
         }
     }
 
-    // Logout handler
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');

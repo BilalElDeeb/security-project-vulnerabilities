@@ -9,7 +9,11 @@ const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await API.post('/authentication/login', { email, password });
+            const sanitizedData = {
+                email: email.replace(/<[^>]+>/g, ''),
+                password
+            };
+            const response = await API.post('/authentication/login', sanitizedData);
             localStorage.setItem('token', response.data.token); // Store token
             alert('Login successful');
             window.location.href = '/admin'; // Redirect based on role
