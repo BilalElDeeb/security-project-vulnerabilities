@@ -1,36 +1,39 @@
 import React, { useState } from 'react';
-import axios from '../api/apiClient';
+import API from '../api/apiClient';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/authentication/login', { email, password });
-            if (response.data) {
-                // Save username to localStorage
-                localStorage.setItem('username', response.data.user.username);
-                alert('Login successful!');
-                window.location.reload(); // Reload to update the Navbar
-            }
-        } catch (error) {
-            alert(error.response?.data?.message || 'Login failed');
+            const response = await API.post('/authentication/login', { email, password });
+            localStorage.setItem('token', response.data.token); // Store token
+            alert('Login successful');
+            window.location.href = '/admin'; // Redirect based on role
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed');
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <div>
-                <label>Email:</label>
-                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </div>
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
             <button type="submit">Login</button>
+            {error && <p>{error}</p>}
         </form>
     );
 };

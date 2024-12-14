@@ -1,0 +1,41 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #282c34;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.navbar-links a,
+.navbar-actions a {
+    text-decoration: none;
+    color: white;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.navbar-links a:hover,
+.navbar-actions a:hover {
+    text-decoration: underline;
+}
+
+.navbar .welcome-message {
+    margin-right: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.navbar .logout-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.navbar .logout-button:hover {
+    background-color: #0056b3;
+}

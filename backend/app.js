@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDb = require('./config/databaseConnection');
 const authenticationRoutes = require('./routes/authenticationRoutes');
 const userRoutes = require('./routes/userRoutes');
+const { verifyToken, verifyAdmin } = require('./middleware/authMiddleware'); // Add relevant middlewares
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,8 @@ app.use(cors({
 
 // Define routes
 app.use('/api/authentication', authenticationRoutes);
-app.use('/api/users', userRoutes);
+
+// Protect user routes and ensure RBAC with middleware
+app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
 
 module.exports = app;

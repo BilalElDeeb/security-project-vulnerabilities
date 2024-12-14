@@ -1,19 +1,20 @@
 const express = require('express');
-const User = require('../models/user');
+const { verifyToken, verifyAdmin } = require('../middleware/authMiddleware');
 const router = express.Router();
+const User = require('../models/user');
 
-// Get all users
-router.get('/', async (req, res) => {
+// Get all users (Admin-only)
+router.get('/', verifyToken, verifyAdmin, async (req, res) => {
     try {
-        const users = await User.find({});
+        const users = await User.find();
         res.json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch users' });
+        res.status(500).json({ message: 'Error retrieving users' });
     }
 });
 
-// Delete a user
-router.delete('/:id', async (req, res) => {
+// Delete a user (Admin-only)
+router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
@@ -22,19 +23,6 @@ router.delete('/:id', async (req, res) => {
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete user' });
-    }
-});
-
-// Update a user
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(updatedUser);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to update user' });
     }
 });
 

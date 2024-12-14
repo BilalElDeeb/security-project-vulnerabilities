@@ -9,7 +9,7 @@ const SignupForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/authentication/signup', { username, email, password });
+            const response = await axios.post('/authentication/signup', { username, email, password });
             alert(response.data.message);
         } catch (error) {
             alert(error.response.data.message || 'Signup failed');

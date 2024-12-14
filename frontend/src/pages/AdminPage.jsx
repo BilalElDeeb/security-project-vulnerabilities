@@ -1,43 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../api/apiClient';
+import apiClient from '../api/apiClient';
 
 const AdminPage = () => {
     const [users, setUsers] = useState([]);
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('/api/users');
+            const response = await apiClient.get('/users');
             setUsers(response.data);
         } catch (error) {
-            alert('Failed to fetch users');
+            console.error('Failed to fetch users:', error);
         }
     };
 
-    const deleteUser = async (id) => {
+    const handleDelete = async (userId) => {
         try {
-            await axios.delete(`/api/users/${id}`);
-            alert('User deleted successfully');
-            fetchUsers(); // Refresh the user list
+            await apiClient.delete(`/users/${userId}`);
+            setUsers(users.filter(user => user._id !== userId));
         } catch (error) {
-            alert('Failed to delete user');
+            console.error('Failed to delete user:', error);
         }
     };
 
-    const editUser = async (id) => {
-        const newUsername = prompt('Enter new username:');
-        if (!newUsername) return;
-
-        try {
-            await axios.put(`/api/users/${id}`, { username: newUsername });
-            alert('User updated successfully');
-            fetchUsers(); // Refresh the user list
-        } catch (error) {
-            alert('Failed to update user');
-        }
+    const handleEdit = (userId) => {
+        // Navigate to an edit page or display an edit modal
+        console.log('Edit user:', userId);
     };
 
     useEffect(() => {
-        fetchUsers(); // Fetch users on component mount
+        fetchUsers();
     }, []);
 
     return (
@@ -52,13 +43,13 @@ const AdminPage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
+                    {users.map(user => (
                         <tr key={user._id}>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>
-                                <button onClick={() => editUser(user._id)}>Edit</button>
-                                <button onClick={() => deleteUser(user._id)}>Delete</button>
+                                <button onClick={() => handleEdit(user._id)}>Edit</button>
+                                <button onClick={() => handleDelete(user._id)}>Delete</button>
                             </td>
                         </tr>
                     ))}

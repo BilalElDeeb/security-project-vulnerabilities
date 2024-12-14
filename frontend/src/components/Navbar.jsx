@@ -1,73 +1,53 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Ensure you have installed jwt-decode
+import '../styles/Navbar.css';
 
 const Navbar = () => {
-    const username = localStorage.getItem('username');
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+    let username = '';
 
+    // Decode the token if it exists
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token);
+            username = decodedToken.username || '';
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            username = '';
+        }
+    }
+
+    // Logout handler
     const handleLogout = () => {
-        localStorage.removeItem('username');
-        window.location.reload();
+        localStorage.removeItem('token');
+        navigate('/login');
     };
 
     return (
-        <nav style={styles.navbar}>
-            <ul style={styles.navList}>
-                <li style={styles.navItem}>
-                    <Link to="/" style={styles.navLink}>Home</Link>
-                </li>
-                {username ? (
+        <nav className="navbar">
+            <div className="navbar-links">
+                <Link to="/">Home</Link>
+                {token && <Link to="/admin">Admin</Link>}
+            </div>
+            <div className="navbar-actions">
+                {!token ? (
                     <>
-                        <li style={styles.navItem}>
-                            <span style={styles.navLink}>Hello, {username}</span>
-                        </li>
-                        <li style={styles.navItem}>
-                            <Link to="/admin" style={styles.navLink}>Admin Panel</Link>
-                        </li>
-                        <li style={styles.navItem}>
-                            <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
-                        </li>
+                        <Link to="/login">Login</Link>
+                        <Link to="/signup">Signup</Link>
                     </>
                 ) : (
                     <>
-                        <li style={styles.navItem}>
-                            <Link to="/login" style={styles.navLink}>Login</Link>
-                        </li>
-                        <li style={styles.navItem}>
-                            <Link to="/signup" style={styles.navLink}>Signup</Link>
-                        </li>
+                        <span className="welcome-message">Hello, {username}!</span>
+                        <button className="logout-button" onClick={handleLogout}>
+                            Logout
+                        </button>
                     </>
                 )}
-            </ul>
+            </div>
         </nav>
     );
-};
-
-const styles = {
-    navbar: {
-        backgroundColor: '#007bff',
-        padding: '10px',
-    },
-    navList: {
-        display: 'flex',
-        listStyleType: 'none',
-        margin: 0,
-        padding: 0,
-    },
-    navItem: {
-        marginRight: '15px',
-    },
-    navLink: {
-        color: '#fff',
-        textDecoration: 'none',
-        fontWeight: 'bold',
-    },
-    logoutButton: {
-        backgroundColor: 'transparent',
-        border: 'none',
-        color: '#fff',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-    },
 };
 
 export default Navbar;
