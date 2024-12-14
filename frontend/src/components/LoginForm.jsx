@@ -13,6 +13,7 @@ const LoginForm = () => {
                 email: email.replace(/<[^>]+>/g, ''),
                 password
             };
+
             const response = await API.post('/authentication/login', sanitizedData);
             localStorage.setItem('token', response.data.token); // Store token
             alert('Login successful');
